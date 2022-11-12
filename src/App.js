@@ -6,7 +6,9 @@ import Sidebar from "./components/Sidebar";
 import Month from "./components/Month";
 import GlobalContext from "./context/GlobalContext";
 import EventModal from "./components/EventModal";
-import { getCalendarAPI } from "./api/calendarApi";
+// import { getCalendarAPI } from "./api/calendarApi";
+import axios from 'axios';
+
 function App() {
   const [currenMonth, setCurrentMonth] = useState(getMonth());
   const { monthIndex, showEventModal } = useContext(GlobalContext);
@@ -20,9 +22,24 @@ function App() {
   }, []);
 
   const fetchData = async () => {
-    const data = getCalendarAPI();
-    console.log(data);
+    //const data = getCalendarAPI();
+    //console.log(data);
   }
+
+  // const [dataAPI, setDataAPI] = useState("");
+  // const getCalendarAPI = async () => {
+  //   try {
+  //     const res = await axios.get(`https://localhost:44371/api/Events`, {
+  //       headers: {
+  //       },
+  //       params: {},
+  //     });
+  //     setDataAPI(res.data);
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // }
+  // console.log("Data API: " + dataAPI?.data)
 
   return (
     <React.Fragment>

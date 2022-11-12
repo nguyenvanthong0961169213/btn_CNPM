@@ -1,17 +1,17 @@
 import dayjs from "dayjs";
 //import React, { useContext, useState, useEffect } from "react";
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { getRequest } from "../api/calendarApi";
 import GlobalContext from "../context/GlobalContext";
-import { convertSolar2Lunar} from "../util";
-import { convertSolar2LunarMonth} from "../util";
-import {flag_handleMonth} from "./CalendarHeader"
+import { convertSolar2Lunar } from "../util";
+import { convertSolar2LunarMonth } from "../util";
+import { flag_handleMonth } from "./CalendarHeader"
 import * as testmonth from "./Month"
 
-export function ShowLunarCalendar2(){
+export function ShowLunarCalendar2() {
 }
 
-export default function Day({ day, rowIdx , _events}) {
-  //const [dayEvents, setDayEvents] = useState([]);
+export default function Day({ day, rowIdx, _events, title, color, description, startDate, endDate, startTime, endTime }) {
   const dayEvents = initest();
   const {
     setDaySelected,
@@ -20,14 +20,16 @@ export default function Day({ day, rowIdx , _events}) {
     setSelectedEvent,
   } = useContext(GlobalContext);
 
-  function initest(){
+  function initest() {
     const events = _events.filter(
-      (evt ) =>
+      (evt) =>
         dayjs(evt.day).format("DD-MM-YY") === day.format("DD-MM-YY")
     );
     return events;
   }
+
   useEffect(() => {
+    //console.log("evt: ", dataEvents)
     const events = filteredEvents.filter(
       (evt) =>
         dayjs(evt.day).format("DD-MM-YY") === day.format("DD-MM-YY")
@@ -40,31 +42,24 @@ export default function Day({ day, rowIdx , _events}) {
       ? "bg-blue-600 text-white rounded-full w-17"
       : "";
   }
-  function getcolorLichAm()
-  {
+  function getcolorLichAm() {
     return day.format("DD-MM-YY") === dayjs().format("DD-MM-YY")
       ? "text-white"
       : "text-yellow-600";
   }
-  // var flag = true;
-  // window.onload = function () {
-  //   commentform();
-    
-  // }
-  function ShowLunar(dd,mm,yy,timezone) {
-      var dayLaner=convertSolar2Lunar(dd,mm,yy,timezone)
-      var monthLaner=convertSolar2LunarMonth(dd,mm,yy,timezone)
-      var cform = dayLaner+ "/"+monthLaner     
-      
-        if(document.getElementById(day.format("DD/MM/YYYY"))!=null)
-        {
-          document.getElementById(day.format("DD/MM/YYYY")).innerHTML = cform;
-        }
-        else{
-          // document.getElementById(dd).innerHTML=""
-        }
+
+  function ShowLunar(dd, mm, yy, timezone) {
+    var dayLaner = convertSolar2Lunar(dd, mm, yy, timezone)
+    var monthLaner = convertSolar2LunarMonth(dd, mm, yy, timezone)
+    var cform = dayLaner + "/" + monthLaner
+
+    if (document.getElementById(day.format("DD/MM/YYYY")) != null) {
+      document.getElementById(day.format("DD/MM/YYYY")).innerHTML = cform;
+    }
+    else {
+      // document.getElementById(dd).innerHTML=""
+    }
   }
-  
 
   return (
     <div className="border border-gray-200 flex flex-col">
@@ -72,23 +67,18 @@ export default function Day({ day, rowIdx , _events}) {
         {rowIdx === 0 && (
           <p className="text-sm mt-1">
             {day.format("ddd").toUpperCase()}
-            
-            {/* {convert(day).format("DD/MM")} */}
-          
           </p>
-         
         )}
-        
+
         <p className={`text-sm p-1 my-1 text-center  ${getCurrentDayClass()}`}>
           {day.format("DD")}
-          
+
           <div ></div>
-          
+
           <p id={day.format("DD/MM/YYYY")} className={`${getcolorLichAm()}`}>
-            {/* {ShowLunar(parseInt(day.format("DD")),parseInt(day.format("MM"))+1,parseInt(day.format("YYYY")),+7)} */}
-            {convertSolar2Lunar(parseInt(day.format("DD")),parseInt(day.format("MM")),parseInt(day.format("YYYY")),+7)}
-              /
-            {convertSolar2LunarMonth(parseInt(day.format("DD")),parseInt(day.format("MM")),parseInt(day.format("YYYY")),+7)}
+            {convertSolar2Lunar(parseInt(day.format("DD")), parseInt(day.format("MM")), parseInt(day.format("YYYY")), +7)}
+            /
+            {convertSolar2LunarMonth(parseInt(day.format("DD")), parseInt(day.format("MM")), parseInt(day.format("YYYY")), +7)}
           </p>
         </p>
       </header>
@@ -99,15 +89,24 @@ export default function Day({ day, rowIdx , _events}) {
           setShowEventModal(true);
         }}
       >
-         {dayEvents.map((evt, idx) => (
-              <div 
-              key={idx}
-              onClick={() => setSelectedEvent(evt)}
-              className={`bg-${evt.label}-200 p-1 mr-3 text-gray-600 text-sm rounded mb-1 truncate`}
-            >
-              {evt.title}
-            </div>
-        ))}  
+        {/* {dayEvents.map((evt, idx) => (
+          <div
+            key={idx}
+            onClick={() => setSelectedEvent(evt)}
+            className={`bg-${evt.label}-200 p-1 mr-3 text-gray-600 text-sm rounded mb-1 truncate`}
+          >
+            {title}
+          </div>
+        ))} */}
+        <div
+          // key={idx}
+          onClick={() => setSelectedEvent({ title, description, color, startDate, endDate, startTime, endTime })}
+          style={{ backgroundColor: color ? "blue" : "", width: "100%", textAlign: 'center', height: "100%", color: '#fff' }}
+          className={`bg-${color}-200 p-1 mr-3 text-gray-600 text-sm rounded mb-1 truncate`}
+        >
+          <h2>{title}</h2>
+          <p>{description}</p>
+        </div>
       </div>
     </div>
   );

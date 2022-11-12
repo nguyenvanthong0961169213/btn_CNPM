@@ -1,9 +1,64 @@
-import axiosClient from './axiosClient';
+import axios from "axios";
 
-const END_POINT = {
-    CALENDARS: "Calendars"
+export async function postRequest(url, body) {
+    try {
+        let response = await axios.post(process.env.REACT_APP_BASE_URL + url, body, generateRequestHeader());
+        return response.data;
+    } catch (error) {
+        handleErrorCode(error)
+        throw error;
+    }
+}
+export async function getRequest(url) {
+    console.log(process.env.REACT_APP_BASE_URL + url);
+    try {
+        let response = await axios.get(
+            process.env.REACT_APP_BASE_URL + url,
+            generateRequestHeader()
+        );
+        return response.data;
+    } catch (error) {
+        handleErrorCode(error);
+        throw error;
+    }
 }
 
-export const getCalendarAPI = () => {
-    return axiosClient.get(`${END_POINT.CALENDARS}`);
+export async function deleteRequest(url) {
+    try {
+        let response = await axios.delete(process.env.REACT_APP_BASE_URL + url, generateRequestHeader());
+        return response.data;
+    } catch (error) {
+        handleErrorCode(error)
+        throw error;
+    }
+}
+
+export async function patchRequest(url, body) {
+    try {
+        let response = await axios.patch(process.env.REACT_APP_BASE_URL + url, body, generateRequestHeader());
+        return response.data;
+    } catch (error) {
+        handleErrorCode(error)
+        throw error;
+    }
+}
+
+export function generateRequestHeader() {
+    return {
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("accessToken"),
+        },
+    };
+}
+
+export const handleErrorCode = (err) => {
+    switch (err.response.status) {
+        case 401:
+            //message.error(err.message)    
+            break;
+        default:
+            //message.error(err.message)
+            break;
+    }
 }

@@ -1,7 +1,9 @@
-import React, { useContext, useState } from "react";
+import axios from "axios";
+import React, { useContext, useEffect, useState } from "react";
 import GlobalContext from "../context/GlobalContext";
 // import * as test from "../util"
 // import dayjs, { Dayjs } from "dayjs";
+import moment from "moment";
 
 const labelsClasses = [
     "indigo",
@@ -31,7 +33,6 @@ export default function EventModal() {
             ? labelsClasses.find((lbl) => lbl === selectedEvent.label)
             : labelsClasses[0]
     );
-
     function handleSubmit(e) {
         e.preventDefault();
         const calendarEvent = {
@@ -46,12 +47,11 @@ export default function EventModal() {
         } else {
             dispatchCalEvent({ type: "push", payload: calendarEvent });
         }
-
         setShowEventModal(false);
     }
 
-
     function onclickTimeNotification() {
+        // console.log("Data API: " + dataAPI?.data)
         var checkBox = document.getElementById("myCheck");
         // var ngaychuyen=convertSolar2Lunar(dayjs().date.format(yy),dayjs().month(),dayjs().year.format(yy),7)
         if (checkBox.checked === true) {
@@ -76,6 +76,8 @@ export default function EventModal() {
     var showdate = new Date(),
         displaytime = showdate.getHours() + ':' + showdate.getMinutes(),
         displayDate = new Date(showdate.setDate(showdate.getDate())).toISOString().split('T')[0];
+    //console.log("time: ", moment(selectedEvent.startTime).format("LT"));
+    console.log("alo", displayDate);
 
     return (
         <div className="h-screen w-full fixed left-0 top-0 flex justify-center items-center">
@@ -123,15 +125,17 @@ export default function EventModal() {
                             schedule
                         </span>
                         <p>
-                            <input type="time" className="w-2/5 mr-5" defaultValue={displaytime} ></input>
-                            <input type="date" id="start" min={daySelected.format("YYYY-MM-DD")} max="" defaultValue={displayDate}></input>
+                            <input type="time" className="w-2/5 mr-5" defaultValue={selectedEvent?.startTime ? moment(selectedEvent.startTime).format('HH:mm') : displaytime} ></input>
+                            <input type="date" id="start" max="" defaultValue={selectedEvent?.startDate ? moment(selectedEvent.startDate).format('YYYY-MM-DD') : displayDate}></input>
                         </p>
 
                         <span className="material-icons-outlined text-red-700">
                             schedule
                         </span>
-                        <p><input type="time" className="w-2/5 mr-5" ></input><input type="date" id="start" name="trip-start"
-                            min={daySelected.format("YYYY-MM-DD")} max=""></input></p>
+                        <p>
+                            <input type="time" className="w-2/5 mr-5" defaultValue={selectedEvent?.endTime ? moment(selectedEvent.endTime).format('HH:mm') : null} ></input>
+                            <input type="date" id="start" max="" defaultValue={selectedEvent?.endDate ? moment(selectedEvent.endDate).format('YYYY-MM-DD') : null}></input>
+                        </p>
                         <span className="material-icons-outlined  ">
                             notifications_active
                         </span>
@@ -164,7 +168,7 @@ export default function EventModal() {
                                     onClick={() => setSelectedLabel(lblClass)}
                                     className={`bg-${lblClass}-500 w-6 h-6 rounded-full flex items-center justify-center cursor-pointer`}
                                 >
-                                    {selectedLabel === lblClass && (
+                                    {selectedEvent?.color === lblClass && (
                                         <span className="material-icons-outlined text-white text-sm">
                                             check
                                         </span>
