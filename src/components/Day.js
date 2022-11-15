@@ -11,7 +11,7 @@ import * as testmonth from "./Month"
 export function ShowLunarCalendar2() {
 }
 
-export default function Day({ day, rowIdx, _events, title, color, description, startDate, endDate, startTime, endTime }) {
+export default function Day({ day, rowIdx, _events }) {
   const dayEvents = initest();
   const {
     setDaySelected,
@@ -21,11 +21,11 @@ export default function Day({ day, rowIdx, _events, title, color, description, s
   } = useContext(GlobalContext);
 
   function initest() {
-    const events = _events.filter(
-      (evt) =>
-        dayjs(evt.day).format("DD-MM-YY") === day.format("DD-MM-YY")
-    );
-    return events;
+    // const events = _events.filter(
+    //   (evt) =>
+    //     dayjs(evt.day).format("DD-MM-YY") === day.format("DD-MM-YY")
+    // );
+    // return events;
   }
 
   useEffect(() => {
@@ -89,24 +89,24 @@ export default function Day({ day, rowIdx, _events, title, color, description, s
           setShowEventModal(true);
         }}
       >
-        {/* {dayEvents.map((evt, idx) => (
+        {_events.map((evt, idx) => (
           <div
             key={idx}
             onClick={() => setSelectedEvent(evt)}
-            className={`bg-${evt.label}-200 p-1 mr-3 text-gray-600 text-sm rounded mb-1 truncate`}
+            className={`bg-${evt.color}-200 p-1 mr-3 text-gray-600 text-sm rounded mb-1 truncate`}
           >
-            {title}
+            {evt.title}
           </div>
-        ))} */}
-        <div
+        ))}
+        {/* <div
           // key={idx}
-          onClick={() => setSelectedEvent({ title, description, color, startDate, endDate, startTime, endTime })}
-          style={{ backgroundColor: color ? "blue" : "", width: "100%", textAlign: 'center', height: "100%", color: '#fff' }}
+          onClick={() => setSelectedEvent({ _events.title, _events.description, color, startDate, endDate, startTime, endTime })}
+          style={{ backgroundColor: color ? setDaySelected.color : "", width: "100%", textAlign: 'center', height: "100%", color: '#fff' }}
           className={`bg-${color}-200 p-1 mr-3 text-gray-600 text-sm rounded mb-1 truncate`}
         >
           <h2>{title}</h2>
           <p>{description}</p>
-        </div>
+        </div> */}
       </div>
     </div>
   );

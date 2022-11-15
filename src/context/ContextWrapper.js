@@ -8,6 +8,7 @@ import GlobalContext from "./GlobalContext";
 import dayjs from "dayjs";
 
 function savedEventsReducer(state, { type, payload }) {
+  console.log(payload);
   switch (type) {
     case "push":
       return [...state, payload];
@@ -22,12 +23,12 @@ function savedEventsReducer(state, { type, payload }) {
   }
 }
 function initEvents() {
-  
+
   const storageEvents = localStorage.getItem("savedEvents");
   const parsedEvents = storageEvents ? JSON.parse(storageEvents) : [];
   return parsedEvents;
 }
-function initest(){
+function initest() {
   const storageEvents = localStorage.getItem("savedEvents");
   const parsedEvents = storageEvents ? JSON.parse(storageEvents) : [];
   return parsedEvents;
@@ -76,7 +77,7 @@ export default function ContextWrapper(props) {
     });
   }, [savedEvents]);
 
- 
+
 
   useEffect(() => {
     if (smallCalendarMonth !== null) {

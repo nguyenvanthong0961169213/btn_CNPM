@@ -34,35 +34,37 @@ export default function Month({ month }) {
         let show = []
         month.map((row, i) => {
           row.map(day => {
-            let repeatCheck = {}
-            data.map(event => {
-              let dayDate = day.format('YYYY-MM-DD')
-              let startDate = moment(event.startDate).format('YYYY-MM-DD')
-              let endDate = moment(event.endDate).format('YYYY-MM-DD')
-              if (dayDate >= startDate && dayDate <= endDate) {
-                repeatCheck = {
-                  ...repeatCheck, rowIdx: i,
-                  day: day,
-                  title: event.title,
-                  color: "red", //event.color
-                  description: event.description,
-                  startDate: startDate,
-                  endDate: endDate,
-                  startTime: event.startTime,
-                  endTime: event.endTime
-                }
-              } else {
-                repeatCheck = {
-                  ...repeatCheck,
-                  rowIdx: i,
-                  day: day,
-                }
+            let eventDay = {}
+            let eventOfDate = data.filter(s => day.format('YYYY-MM-DD') == moment(s.startDate).format('YYYY-MM-DD'));
+            if (eventOfDate.length > 0) {
+              eventDay = {
+                rowIdx: i,
+                day: day,
+                events: eventOfDate.map(event => {
+                  return {
+                    title: event.title,
+                    color: "red", //event.color
+                    description: event.description,
+                    startDate: moment(event.startDate).format('YYYY-MM-DD'),
+                    endDate: moment(event.endDate).format('YYYY-MM-DD'),
+                    startTime: event.startTime,
+                    endTime: event.endTime
+                  }
+                })
               }
-            })
-            show.push(repeatCheck)
+            }
+            else {
+              eventDay = {
+                rowIdx: i,
+                day: day,
+                events: []
+              }
+            }
+            show.push(eventDay);
           }
           )
         })
+        console.log(show)
         setDataEvents(show)
       } catch (error) {
         console.log(error);
@@ -71,7 +73,7 @@ export default function Month({ month }) {
   }, []);
 
   const events = getEvent();
-  console.log(events);
+  // console.log(events);
   return (
     <div className="flex-1 grid grid-cols-7 grid-rows-5">
       {/* {month.map((row, i) => (
@@ -82,9 +84,7 @@ export default function Month({ month }) {
         </React.Fragment>
       ))} */}
       {dataEvents.map((data, idx) =>
-        <Day day={data.day} key={idx} rowIdx={data.rowIdx} _events={events} title={data.title} color={data.color}
-          description={data.description} startDate={data.startDate}
-          endDate={data.endDate} startTime={data.startTime} endTime={data.endTime} />
+        <Day day={data.day} key={idx} rowIdx={data.rowIdx} _events={data.events} />
       )}
     </div>
   );

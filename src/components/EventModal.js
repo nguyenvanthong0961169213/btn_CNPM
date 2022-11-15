@@ -15,6 +15,9 @@ const labelsClasses = [
 ];
 
 export default function EventModal() {
+    const showdate = new Date(),
+        displaytime = showdate.getHours() + ':' + showdate.getMinutes(),
+        displayDate = new Date(showdate.setDate(showdate.getDate())).toISOString().split('T')[0];
     const {
         setShowEventModal,
         daySelected,
@@ -33,14 +36,41 @@ export default function EventModal() {
             ? labelsClasses.find((lbl) => lbl === selectedEvent.label)
             : labelsClasses[0]
     );
+    const [startTime, setStartTime] = useState(
+        selectedEvent?.startTime
+            ? moment(selectedEvent.startTime).format('hh:mm')
+            : displaytime
+    );
+    const [endTime, setEndTime] = useState(
+        selectedEvent?.endTime
+            ? moment(selectedEvent.endTime).format('hh:mm')
+            : ''
+    );
+    const [startDate, setStartDate] = useState(
+        selectedEvent?.startDate
+            ? moment(selectedEvent.startDate).format('YYYY-MM-DD')
+            : displayDate
+    );
+    const [endDate, setEndDate] = useState(
+        selectedEvent?.endDate
+            ? moment(selectedEvent.endDate).format('YYYY-MM-DD')
+            : ''
+    );
+
     function handleSubmit(e) {
         e.preventDefault();
         const calendarEvent = {
             title,
             description,
-            label: selectedLabel,
-            day: daySelected.valueOf(),
-            id: selectedEvent ? selectedEvent.id : Date.now(),
+            id: selectedEvent?.id,
+            startTime,
+            startDate,
+            endDate,
+            endTime,
+            statusNotification: true,
+            timeNotification: "2022-11-15T15:27:55.502Z",
+            timeBeforNotification: 0,
+            color: selectedLabel,
         };
         if (selectedEvent) {
             dispatchCalEvent({ type: "update", payload: calendarEvent });
@@ -72,12 +102,8 @@ export default function EventModal() {
     }
 
     function setTime() { }
-
-    var showdate = new Date(),
-        displaytime = showdate.getHours() + ':' + showdate.getMinutes(),
-        displayDate = new Date(showdate.setDate(showdate.getDate())).toISOString().split('T')[0];
     //console.log("time: ", moment(selectedEvent.startTime).format("LT"));
-    console.log("alo", displayDate);
+    console.log("alo", selectedLabel);
 
     return (
         <div className="h-screen w-full fixed left-0 top-0 flex justify-center items-center">
@@ -124,18 +150,18 @@ export default function EventModal() {
                         <span className="material-icons-outlined text-blue-700">
                             schedule
                         </span>
-                        <p>
-                            <input type="time" className="w-2/5 mr-5" defaultValue={selectedEvent?.startTime ? moment(selectedEvent.startTime).format('HH:mm') : displaytime} ></input>
-                            <input type="date" id="start" max="" defaultValue={selectedEvent?.startDate ? moment(selectedEvent.startDate).format('YYYY-MM-DD') : displayDate}></input>
-                        </p>
+                        <div>
+                            <input type="time" className="w-2/5 mr-5" value={startTime} onChange={(e) => setStartTime(e.target.value)}></input>
+                            <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)}></input>
+                        </div>
 
                         <span className="material-icons-outlined text-red-700">
                             schedule
                         </span>
-                        <p>
-                            <input type="time" className="w-2/5 mr-5" defaultValue={selectedEvent?.endTime ? moment(selectedEvent.endTime).format('HH:mm') : null} ></input>
-                            <input type="date" id="start" max="" defaultValue={selectedEvent?.endDate ? moment(selectedEvent.endDate).format('YYYY-MM-DD') : null}></input>
-                        </p>
+                        <div>
+                            <input type="time" className="w-2/5 mr-5" value={endTime} onChange={(e) => setEndTime(e.target.value)} ></input>
+                            <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)}></input>
+                        </div>
                         <span className="material-icons-outlined  ">
                             notifications_active
                         </span>
