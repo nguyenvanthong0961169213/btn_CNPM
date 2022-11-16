@@ -6,33 +6,43 @@ import React, {
 } from "react";
 import GlobalContext from "./GlobalContext";
 import dayjs from "dayjs";
+import { deleteRequest, postRequest } from "../api/calendarApi";
 
 function savedEventsReducer(state, { type, payload }) {
   console.log(payload);
   switch (type) {
     case "push":
-      return [...state, payload];
+      //return [...state, payload];
+      postRequest("Events/CreateEvent", payload);
+      window.location.reload(false);
+      return;
     case "update":
-      return state.map((evt) =>
-        evt.id === payload.id ? payload : evt
-      );
+      postRequest("Events/Update", payload);
+      window.location.reload(false);
+      return;
+      // return state.map((evt) =>
+      //   evt.id === payload.id ? payload : evt
+      // );
     case "delete":
-      return state.filter((evt) => evt.id !== payload.id);
+      deleteRequest("Events/"+payload.id)
+      window.location.reload(false);
+      return;
+      //return state.filter((evt) => evt.id !== payload.id);
     default:
       throw new Error();
   }
 }
-function initEvents() {
+// function initEvents() {
 
-  const storageEvents = localStorage.getItem("savedEvents");
-  const parsedEvents = storageEvents ? JSON.parse(storageEvents) : [];
-  return parsedEvents;
-}
-function initest() {
-  const storageEvents = localStorage.getItem("savedEvents");
-  const parsedEvents = storageEvents ? JSON.parse(storageEvents) : [];
-  return parsedEvents;
-}
+//   const storageEvents = localStorage.getItem("savedEvents");
+//   const parsedEvents = storageEvents ? JSON.parse(storageEvents) : [];
+//   return parsedEvents;
+// }
+// function initest() {
+//   const storageEvents = localStorage.getItem("savedEvents");
+//   const parsedEvents = storageEvents ? JSON.parse(storageEvents) : [];
+//   return parsedEvents;
+// }
 
 export default function ContextWrapper(props) {
   const [monthIndex, setMonthIndex] = useState(dayjs().month());
@@ -44,9 +54,9 @@ export default function ContextWrapper(props) {
   const [savedEvents, dispatchCalEvent] = useReducer(
     savedEventsReducer,
     [],
-    initEvents
+    
   );
-  const [test] = initest();
+  // const [test] = initest();
 
   const filteredEvents = useMemo(() => {
     return savedEvents.filter((evt) =>

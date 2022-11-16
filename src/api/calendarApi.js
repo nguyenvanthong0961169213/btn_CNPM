@@ -28,7 +28,7 @@ export async function deleteRequest(url) {
         let response = await axios.delete(process.env.REACT_APP_BASE_URL + url, generateRequestHeader());
         return response.data;
     } catch (error) {
-        handleErrorCode(error)
+        handleErrorCode(error);
         throw error;
     }
 }
@@ -53,6 +53,7 @@ export function generateRequestHeader() {
 }
 
 export const handleErrorCode = (err) => {
+    alert(err.message)
     switch (err.response.status) {
         case 401:
             //message.error(err.message)    

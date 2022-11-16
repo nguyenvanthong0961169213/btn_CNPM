@@ -17,7 +17,8 @@ const labelsClasses = [
 export default function EventModal() {
     const showdate = new Date(),
         displaytime = showdate.getHours() + ':' + showdate.getMinutes(),
-        displayDate = new Date(showdate.setDate(showdate.getDate())).toISOString().split('T')[0];
+        displaytime_1=showdate.getHours()+1 + ':' + showdate.getMinutes(),
+        displayDate = new Date(showdate.setDate(showdate.getDate() + 1)).toISOString().split('T')[0];
     const {
         setShowEventModal,
         daySelected,
@@ -33,7 +34,7 @@ export default function EventModal() {
     );
     const [selectedLabel, setSelectedLabel] = useState(
         selectedEvent
-            ? labelsClasses.find((lbl) => lbl === selectedEvent.label)
+            ? labelsClasses.find((lbl) => lbl == selectedEvent.label)
             : labelsClasses[0]
     );
     const [startTime, setStartTime] = useState(
@@ -44,32 +45,39 @@ export default function EventModal() {
     const [endTime, setEndTime] = useState(
         selectedEvent?.endTime
             ? moment(selectedEvent.endTime).format('hh:mm')
-            : ''
+            : displaytime_1
     );
     const [startDate, setStartDate] = useState(
         selectedEvent?.startDate
             ? moment(selectedEvent.startDate).format('YYYY-MM-DD')
+            : daySelected ? daySelected.format('YYYY-MM-DD')
             : displayDate
     );
     const [endDate, setEndDate] = useState(
         selectedEvent?.endDate
             ? moment(selectedEvent.endDate).format('YYYY-MM-DD')
-            : ''
+            : daySelected ? daySelected.format('YYYY-MM-DD')
+            : displayDate
+    );
+    const[select,setSelect]=useState(
+        selectedEvent ? selectedEvent.statusNotification : false
+
     );
 
     function handleSubmit(e) {
         e.preventDefault();
+        var hasNoti = document.getElementById("myCheck");
+        let phut = document.getElementById("phut")?.value;
         const calendarEvent = {
             title,
             description,
             id: selectedEvent?.id,
-            startTime,
-            startDate,
-            endDate,
-            endTime,
-            statusNotification: true,
-            timeNotification: "2022-11-15T15:27:55.502Z",
-            timeBeforNotification: 0,
+            startTime: "0001-01-01T" + startTime + ":00.000Z",
+            startDate: moment(startDate).add('days', 1),
+            endDate: moment(endDate).add('days', 1),
+            endTime: "0001-01-01T" + endTime + ":00.000Z",
+            statusNotification: hasNoti.checked,
+            timeBeforNotification: phut,
             color: selectedLabel,
         };
         if (selectedEvent) {
@@ -77,33 +85,52 @@ export default function EventModal() {
         } else {
             dispatchCalEvent({ type: "push", payload: calendarEvent });
         }
-        setShowEventModal(false);
+        // setShowEventModal(false);
+        // window.location.reload(false);
     }
 
     function onclickTimeNotification() {
+        setSelect(!select)
         // console.log("Data API: " + dataAPI?.data)
         var checkBox = document.getElementById("myCheck");
         // var ngaychuyen=convertSolar2Lunar(dayjs().date.format(yy),dayjs().month(),dayjs().year.format(yy),7)
         if (checkBox.checked === true) {
             // text.style.display = "block";
-            let holder = document.getElementById("holder")
-            holder.innerHTML = '<select id="list" className="ml-4"> <option>5 phút</option> <option>10 phút</option> <option>30 phút</option> <option>60 phút</option>'
-
+            let holder = document.getElementById("holder");
+            holder.innerHTML = '<select id="phut" className="ml-4"> <option value="5">5 phút</option> <option value="10">10 phút</option> <option value="30">30 phút</option> <option value="60">60 phút</option>'
+            //console.log(selectedEvent.timeBeforNotification);
+            document.getElementById("phut").value = selectedEvent?.timeBeforNotification ? selectedEvent?.timeBeforNotification : 5;
         } else {
             let holder = document.getElementById("holder")
             holder.innerHTML = null
-            //    const now_day=dayjs().day()-1+19
-            //    var k=test.convertSolar2Lunar(now_day,dayjs().month()+1,dayjs().year(),+7)
-            //    console.log(k);
-            // console.log(dayjs().year("YY"));
-            //    let test_2=document.getElementById("test_2")
-            //    test_2.innerHTML='test.convertSolar2Lunar(dayjs().day(),dayjs().month(),dayjs().year(),7)'
         }
     }
+    function check_time(e)
+    {
+        if(startDate===endDate)
+        {
+           if(startTime<endTime)
+           {
+             handleSubmit(e)
+           }
+           else{
+            alert('Thời gian bắt đầu phải trước thời gian kết thúc sự kiện');
+           }
+        }
+        else if(startDate<endDate)
+        {
+            handleSubmit(e)
+        }
+        else{
+            alert('Thời gian bắt đầu phải trước thời gian kết thúc sự kiện');
+        }
+    }
+    
 
     function setTime() { }
     //console.log("time: ", moment(selectedEvent.startTime).format("LT"));
-    console.log("alo", selectedLabel);
+    console.log(daySelected)
+    
 
     return (
         <div className="h-screen w-full fixed left-0 top-0 flex justify-center items-center">
@@ -159,16 +186,30 @@ export default function EventModal() {
                             schedule
                         </span>
                         <div>
-                            <input type="time" className="w-2/5 mr-5" value={endTime} onChange={(e) => setEndTime(e.target.value)} ></input>
-                            <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)}></input>
+                            <input type="time" className="w-2/5 mr-5" value={endTime} onChange={(e) => setEndTime(e.target.value)}></input>
+
+                            <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} min={startDate}></input>
                         </div>
                         <span className="material-icons-outlined  ">
                             notifications_active
                         </span>
                         <p>
-                            <input id="myCheck" type="checkBox" className="mr-8" onClick={onclickTimeNotification} value="Thêm thông báo" />
-                            <span id="holder" className="mr-4"></span>
-                            <span id="test_2">
+                            {/* <input id="myCheck" type="checkBox" className="mr-8" onClick={onclickTimeNotification} defaultChecked={select}/> */}
+                            Thông Báo: 
+                            <input  id="myCheck" type="checkBox" className="mr-8 ml-3" onClick={() => setSelect(!select)} defaultChecked={select} />
+                            <span id="holder" className="mr-4">
+                                {
+                                    select
+                                    ? (
+                                        <select id="phut" className="ml-4" defaultValue={selectedEvent?.timeBeforNotification ? selectedEvent?.timeBeforNotification : 5}> 
+                                            <option value="5">5 phút</option> 
+                                            <option value="10">10 phút</option> 
+                                            <option value="30">30 phút</option> 
+                                            <option value="60">60 phút</option>
+                                        </select>
+                                        )
+                                    : null
+                                }
                             </span>
                         </p>
                         <span className="material-icons-outlined text-gray-400">
@@ -194,7 +235,7 @@ export default function EventModal() {
                                     onClick={() => setSelectedLabel(lblClass)}
                                     className={`bg-${lblClass}-500 w-6 h-6 rounded-full flex items-center justify-center cursor-pointer`}
                                 >
-                                    {selectedEvent?.color === lblClass && (
+                                    {selectedLabel === lblClass && (
                                         <span className="material-icons-outlined text-white text-sm">
                                             check
                                         </span>
@@ -207,7 +248,7 @@ export default function EventModal() {
                 <footer className="flex justify-end border-t p-3 mt-5">
                     <button
                         type="submit"
-                        onClick={handleSubmit}
+                        onClick={check_time}
                         className="bg-blue-500 hover:bg-blue-600 px-6 py-2 rounded text-white"
                     >
                         Save
