@@ -5,7 +5,7 @@ import { getRequest } from "../api/calendarApi";
 import GlobalContext from "../context/GlobalContext";
 import { convertSolar2Lunar } from "../util";
 import { convertSolar2LunarMonth } from "../util";
-import { flag_handleMonth } from "./CalendarHeader"
+
 import * as testmonth from "./Month"
 
 export function ShowLunarCalendar2() {

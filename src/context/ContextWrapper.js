@@ -7,27 +7,32 @@ import React, {
 import GlobalContext from "./GlobalContext";
 import dayjs from "dayjs";
 import { deleteRequest, postRequest } from "../api/calendarApi";
+import App_1 from "../App";
+import { check_flag_show_lunar } from "..";
+
 
 function savedEventsReducer(state, { type, payload }) {
   console.log(payload);
   switch (type) {
     case "push":
-      //return [...state, payload];
       postRequest("Events/CreateEvent", payload);
       window.location.reload(false);
-      return;
+      // return;
+    
+       return [...state, payload];
     case "update":
       postRequest("Events/Update", payload);
       window.location.reload(false);
-      return;
-      // return state.map((evt) =>
-      //   evt.id === payload.id ? payload : evt
-      // );
+      // return;
+      return state.map((evt) =>
+        evt.id === payload.id ? payload : evt
+      );
+      
     case "delete":
-      deleteRequest("Events/"+payload.id)
+      deleteRequest("Events/"+payload.id);
       window.location.reload(false);
-      return;
-      //return state.filter((evt) => evt.id !== payload.id);
+      // return;
+      return state.filter((evt) => evt.id !== payload.id);
     default:
       throw new Error();
   }

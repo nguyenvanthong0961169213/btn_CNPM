@@ -5,6 +5,8 @@ import moment from 'moment';
 
 export default function Month({ month }) {
 
+  console.log("testday",month)
+
   const [dataEvents, setDataEvents] = useState([])
 
   useEffect(() => {
@@ -13,6 +15,7 @@ export default function Month({ month }) {
       try {
         let data = await getRequest("Events/AllEvent")
         // setDataEvents(data)
+        console.log("data", data)
         let show = []
         month.map((row, i) => {
           row.map(day => {
@@ -62,23 +65,16 @@ export default function Month({ month }) {
   }
 
   const events = getEvent();
-  // console.log(events);
+  console.log(events);
   return (
-    console.log("nextMonth",month),
     getEvent(),
     <div className="flex-1 grid grid-cols-7 grid-rows-5">
-      {/* {month.map((row, i) => (
-        <React.Fragment key={i}>
-          {row.map((day, idx) => (
-            <Day day={day} key={idx} rowIdx={i} _events={events} />
-          ))}
-        </React.Fragment>
-      ))} */}
       {dataEvents.map((data, idx) =>
         <Day day={data.day} key={idx} rowIdx={data.rowIdx} _events={data.events} />
       )}
     </div>
   );
+ 
 }
 
 
@@ -158,14 +154,8 @@ export function Month_Lunar({ month }) {
   const events = getEvent();
   // console.log(events);
   return (
+    getEvent(),
     <div className="flex-1 grid grid-cols-7 grid-rows-5">
-      {/* {month.map((row, i) => (
-        <React.Fragment key={i}>
-          {row.map((day, idx) => (
-            <Day day={day} key={idx} rowIdx={i} _events={events} />
-          ))}
-        </React.Fragment>
-      ))} */}
       {dataEvents.map((data, idx) =>
         <Day_Lunar day={data.day} key={idx} rowIdx={data.rowIdx} _events={data.events} />
       )}

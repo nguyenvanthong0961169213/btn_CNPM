@@ -1,9 +1,12 @@
 import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import GlobalContext from "../context/GlobalContext";
+
 // import * as test from "../util"
 // import dayjs, { Dayjs } from "dayjs";
 import moment from "moment";
+import App_1 from "../App";
+
 
 const labelsClasses = [
     "indigo",
@@ -41,12 +44,12 @@ export default function EventModal() {
     );
     const [startTime, setStartTime] = useState(
         selectedEvent?.startTime
-            ? moment(selectedEvent.startTime).format('hh:mm')
+            ? moment(selectedEvent.startTime).format('HH:mm')
             : displaytime
     );
     const [endTime, setEndTime] = useState(
         selectedEvent?.endTime
-            ? moment(selectedEvent.endTime).format('hh:mm')
+            ? moment(selectedEvent.endTime).format('HH:mm')
             : displaytime_1
     );
     const [startDate, setStartDate] = useState(
@@ -82,13 +85,20 @@ export default function EventModal() {
             timeBeforNotification: phut,
             color: selectedLabel,
         };
+
+        if(!check_time())
+        {
+            return;
+        }
+
         if (selectedEvent) {
             dispatchCalEvent({ type: "update", payload: calendarEvent });
         } else {
             dispatchCalEvent({ type: "push", payload: calendarEvent });
         }
-        // setShowEventModal(false);
+        setShowEventModal(false);
         // window.location.reload(false);
+        // <App_1 check={false}/>
     }
 
     function onclickTimeNotification() {
@@ -113,25 +123,45 @@ export default function EventModal() {
         {
            if(startTime<endTime)
            {
-             handleSubmit(e)
+             return true;
            }
            else{
             alert('Thời gian bắt đầu phải trước thời gian kết thúc sự kiện');
+            return false;
            }
         }
         else if(startDate<endDate)
         {
-            handleSubmit(e)
+            return true;
         }
         else{
             alert('Thời gian bắt đầu phải trước thời gian kết thúc sự kiện');
+            return false;
         }
     }
+
+    //
+function dialogDelete()
+{
+    if (window.confirm('You may want to delete ?')) {
+        // Save it!
+        {
+            dispatchCalEvent({
+                type: "delete",
+                payload: selectedEvent,
+            });
+            setShowEventModal(false);
+        }
+      } else {
+        // Do nothing!
+        
+      }
+}
     
 
     function setTime() { }
     //console.log("time: ", moment(selectedEvent.startTime).format("LT"));
-    console.log(daySelected)
+    console.log(endTime)
     
 
     return (
@@ -144,13 +174,16 @@ export default function EventModal() {
                     <div>
                         {selectedEvent && (
                             <span
-                                onClick={() => {
-                                    dispatchCalEvent({
-                                        type: "delete",
-                                        payload: selectedEvent,
-                                    });
-                                    setShowEventModal(false);
-                                }}
+                                onClick={
+                                    () => {
+                                    // dispatchCalEvent({
+                                    //     type: "delete",
+                                    //     payload: selectedEvent,
+                                    // });
+                                    // setShowEventModal(false);
+                                   dialogDelete()
+                                }
+                            }
                                 className="material-icons-outlined text-gray-400 cursor-pointer"
                             >
                                 delete
@@ -250,7 +283,7 @@ export default function EventModal() {
                 <footer className="flex justify-end border-t p-3 mt-5">
                     <button
                         type="submit"
-                        onClick={check_time}
+                        onClick={handleSubmit}
                         className="bg-blue-500 hover:bg-blue-600 px-6 py-2 rounded text-white"
                     >
                         Save
