@@ -5,24 +5,6 @@ import moment from 'moment';
 
 export default function Month({ month }) {
 
-  function getEvent() {
-    // Call owr ddaay
-
-    var result = [];
-    result.map(s => {
-      return {
-        id: s.id,
-        title: s.name,
-        day: s.beginHour,
-        // p: s.
-      };
-    })
-    //const storageEvents = localStorage.getItem("savedEvents");
-    //const parsedEvents  = storageEvents ? JSON.parse(storageEvents) : [];
-    return result;
-    //return parsedEvents;
-  }
-
   const [dataEvents, setDataEvents] = useState([])
 
   useEffect(() => {
@@ -75,10 +57,15 @@ export default function Month({ month }) {
       }
     })()
   }, []);
+  function getEvent() {
+    return dataEvents;
+  }
 
   const events = getEvent();
   // console.log(events);
   return (
+    console.log("nextMonth",month),
+    getEvent(),
     <div className="flex-1 grid grid-cols-7 grid-rows-5">
       {/* {month.map((row, i) => (
         <React.Fragment key={i}>

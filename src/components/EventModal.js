@@ -15,10 +15,12 @@ const labelsClasses = [
 ];
 
 export default function EventModal() {
-    const showdate = new Date(),
-        displaytime = showdate.getHours() + ':' + showdate.getMinutes(),
-        displaytime_1=showdate.getHours()+1 + ':' + showdate.getMinutes(),
-        displayDate = new Date(showdate.setDate(showdate.getDate() + 1)).toISOString().split('T')[0];
+    const showdate = new Date();
+    //const displaytime = showdate.getHours() + ':' + showdate.getMinutes(),
+    const displaytime = moment(showdate).format("HH:mm");
+    const displaytime_1 = moment(showdate).add('hours', 1).format("HH:mm"),
+        // displaytime_1=showdate.getHours()+1 + ':' + showdate.getMinutes(),
+        displayDate = new Date(showdate.setDate(showdate.getDate())).toISOString().split('T')[0];
     const {
         setShowEventModal,
         daySelected,
